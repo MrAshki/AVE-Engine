@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#080b10" />
+    <link rel="stylesheet" href="/src/style.css" />
+    <meta name="description" content="Adaptive Web Graphics Engine: an experiment in sharp interfaces, interactive 3D, and adaptive graphics delivery." />
+    <title>AVE — Adaptive Visual Engine</title>
+  </head>
+  <body>
+    <div id="app">
+      <header class="site-header">
+        <a class="brand" href="#top" aria-label="AVE home">
+          <span class="brand-symbol" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span>AVE<span class="brand-slash">/</span>LAB</span>
+        </a>
+        <nav class="main-nav" aria-label="Main navigation">
+          <a href="#platform">THE ENGINE</a><a href="#lab">PERFORMANCE LAB</a>
+        </nav>
+        <div class="top-status"><span class="status-dot"></span> SYSTEM ONLINE <span class="status-version">/ EXPERIMENT 001</span></div>
+      </header>
+
+      <main id="top">
+        <section class="hero" aria-label="Adaptive visual engine">
+          <div class="hero-background-grid" aria-hidden="true"></div>
+          <div class="hero-copy">
+            <div class="eyebrow"><span class="eyebrow-line"></span> THE FUTURE IS RENDERED IN REAL TIME</div>
+            <h1>THE WEB,<br/>BEYOND<br/><span class="headline-accent">PIXELS<span class="period">.</span></span></h1>
+            <p class="hero-description">Cinematic 3D. Precision-sharp interfaces. Motion that responds to you. One adaptive engine, built for the next generation of the web.</p>
+            <div class="hero-actions">
+              <a class="cta cta-primary" href="#platform">EXPLORE THE ENGINE <span aria-hidden="true">↗</span></a>
+              <a class="cta cta-text" href="#lab">VIEW LIVE METRICS <span aria-hidden="true">↓</span></a>
+            </div>
+          </div>
+
+          <div class="visual-viewport" id="visual-viewport" aria-label="Interactive three-dimensional abstract sculpture">
+            <div class="visual-fallback" id="visual-fallback" aria-hidden="true"></div>
+            <canvas id="scene-canvas" aria-hidden="true"></canvas>
+            <div class="frame-corner frame-corner-tl" aria-hidden="true"></div>
+            <div class="frame-corner frame-corner-tr" aria-hidden="true"></div>
+            <div class="frame-corner frame-corner-bl" aria-hidden="true"></div>
+            <div class="frame-corner frame-corner-br" aria-hidden="true"></div>
+            <div class="visual-label visual-label-top"><span class="label-cross">+</span> FIG. 001 / LIVING GEOMETRY</div>
+            <div class="visual-label visual-label-bottom">DRAG YOUR ATTENTION <span>↗</span><span class="visual-label-dim"> / MOVE POINTER</span></div>
+            <div class="reticle reticle-one" aria-hidden="true"></div>
+            <div class="reticle reticle-two" aria-hidden="true"></div>
+          </div>
+
+          <aside class="hero-side-note" aria-hidden="true">ADAPTIVE GRAPHICS / EXPLORATION SERIES 001 — 2026</aside>
+          <div class="hero-footer"><span>SCROLL TO DECODE</span><span class="scroll-line"></span><span>01 / 03</span></div>
+        </section>
+
+        <section class="quality-panel" aria-label="Render quality settings" id="quality-panel">
+          <div class="quality-heading">
+            <span class="mini-overline">REAL-TIME CONTROL</span>
+            <strong>ADAPTIVE RENDER QUALITY</strong>
+            <p>Change the graphics budget without changing the interface sharpness.</p>
+          </div>
+          <div class="quality-modes" role="group" aria-label="Graphics quality">
+            <button type="button" class="mode-button is-active" data-mode="auto" aria-pressed="true">AUTO <span class="auto-pill">LIVE</span></button>
+            <button type="button" class="mode-button" data-mode="high" aria-pressed="false">HIGH</button>
+            <button type="button" class="mode-button" data-mode="balanced" aria-pressed="false">BALANCED</button>
+            <button type="button" class="mode-button" data-mode="eco" aria-pressed="false">ECO</button>
+          </div>
+          <div class="quality-indicator"><span class="status-dot"></span> <span id="active-tier">BALANCED</span></div>
+        </section>
+
+        <section class="platform-section" id="platform">
+          <div class="section-marker"><span class="section-rule"></span> 01 / ARCHITECTURE</div>
+          <div class="platform-headline">
+            <h2>ONE ENGINE.<br/><span>EVERY LAYER.</span></h2>
+            <p>Not another heavyweight canvas. A coordinated graphics stack that uses the right rendering technology for every element.</p>
+          </div>
+          <div class="feature-grid">
+            <article class="feature-card feature-vector">
+              <div class="feature-meta"><span>01</span><span>ALWAYS CRISP</span></div>
+              <div class="vector-art" aria-hidden="true"><svg viewBox="0 0 240 150" role="img"><circle cx="120" cy="74" r="57" fill="none" stroke="currentColor" stroke-width="1"/><circle cx="120" cy="74" r="36" fill="none" stroke="currentColor" stroke-width="1"/><path d="M52 74H188M120 6V143M79 33L162 116M161 33L78 116" fill="none" stroke="currentColor" stroke-width=".7"/><circle cx="120" cy="74" r="7" fill="currentColor"/></svg></div>
+              <div><h3>Vector precision.</h3><p>SVG and native typography remain sharp at any screen density.</p></div>
+            </article>
+            <article class="feature-card feature-motion">
+              <div class="feature-meta"><span>02</span><span>RESPONSIVE MOTION</span></div>
+              <div class="motion-art" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+              <div><h3>Motion with intent.</h3><p>Interaction-first animation with reduced-motion accessibility.</p></div>
+            </article>
+            <article class="feature-card feature-scene">
+              <div class="feature-meta"><span>03</span><span>REAL-TIME DEPTH</span></div>
+              <div class="wire-art" aria-hidden="true"><svg viewBox="0 0 240 150" role="img"><path d="M120 13L194 52V99L120 138L46 99V52Z M46 52L120 93L194 52 M120 93V138 M120 13V93 M46 99L120 54L194 99" fill="none" stroke="currentColor" stroke-width="1.2"/><circle cx="120" cy="93" r="5" fill="currentColor"/></svg></div>
+              <div><h3>Adaptive 3D.</h3><p>GPU-rendered geometry with device-aware resolution and detail budgets.</p></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="lab-section" id="lab">
+          <div class="section-marker"><span class="section-rule"></span> 02 / PERFORMANCE LAB</div>
+          <div class="lab-headline"><h2>MEASURE.<br/><span>DON'T GUESS.</span></h2><p>Live diagnostic readings from this device. Frame rate is a rough performance indicator, not a cross-device benchmark.</p></div>
+          <div class="metrics-grid">
+            <div class="metric"><span>RENDER FPS</span><strong id="metric-fps">—</strong><small>RECENT SAMPLE / APPROXIMATE</small></div>
+            <div class="metric"><span>RENDER RESOLUTION</span><strong id="metric-resolution" class="metric-small">—</strong><small>CANVAS BUFFER / PIXELS</small></div>
+            <div class="metric"><span>QUALITY TIER</span><strong id="metric-tier" class="metric-small">—</strong><small>3 PRESET BUDGETS</small></div>
+            <div class="metric"><span>GRAPHICS API</span><strong id="metric-api" class="metric-small">WEBGL2</strong><small>BASELINE RENDERER</small></div>
+          </div>
+          <p id="metrics-warning" class="metrics-warning" aria-live="polite"></p>
+          <p class="metrics-disclaimer">Experimental build 0.1. Metrics are local runtime samples. Performance claims require controlled multi-device testing.</p>
+        </section>
+      </main>
+
+      <footer class="site-footer"><span>AVE / ADAPTIVE VISUAL ENGINE</span><span>BUILD 0.1.0 — AN OPEN EXPERIMENT IN WEB GRAPHICS</span><a href="#top">BACK TO TOP ↑</a></footer>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
