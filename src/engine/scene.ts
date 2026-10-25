@@ -5,8 +5,10 @@ export type RenderStats = {
   fps: number | null;
   width: number;
   height: number;
+  mode: QualityMode;
   tier: QualityTier;
   api: string;
+  diagnostic: string;
 };
 
 export class VisualEngine {
@@ -29,7 +31,8 @@ export class VisualEngine {
   private measureSince = 0;
   private frameCount = 0;
   private lastFPS: number | null = null;
-  private paused = false;
+  private pageHidden = false;
+  private externallyPaused = false;
   private pointerX = 0;
   private pointerY = 0;
   private scrolling = 0;
@@ -123,6 +126,16 @@ export class VisualEngine {
     this.requestRender();
   }
 
+  setBenchmarkActive(active: boolean): void {
+    this.externallyPaused = active;
+    if (active) {
+      cancelAnimationFrame(this.frameHandle);
+      this.frameHandle = 0;
+    } else {
+      this.resume();
+    }
+  }
+
   private onPointerMove = (event: PointerEvent) => {
     const rect = this.host.getBoundingClientRect();
     this.pointerX = ((event.clientX - rect.left) / rect.width - 0.5) * 2;
@@ -133,8 +146,8 @@ export class VisualEngine {
     if (this.reducedMotion.matches) this.requestRender();
   };
   private onVisibility = () => {
-    this.paused = document.hidden;
-    if (this.paused) {
+    this.pageHidden = document.hidden;
+    if (this.pageHidden) {
       cancelAnimationFrame(this.frameHandle);
       this.frameHandle = 0;
     } else this.resume();
@@ -146,7 +159,7 @@ export class VisualEngine {
   };
 
   private resume(): void {
-    if (this.disposed || this.paused) return;
+    if (this.disposed || this.pageHidden || this.externallyPaused) return;
     this.previousFrame = 0;
     this.measureSince = performance.now();
     this.frameCount = 0;
@@ -160,7 +173,7 @@ export class VisualEngine {
   }
 
   private requestRender(): void {
-    if (this.reducedMotion.matches && !this.paused) this.renderStatic();
+    if (this.reducedMotion.matches && !this.pageHidden && !this.externallyPaused) this.renderStatic();
   }
 
   private applyQuality(): void {
@@ -192,7 +205,7 @@ export class VisualEngine {
 
   private frame = (now: number): void => {
     this.frameHandle = 0;
-    if (this.disposed || this.paused || this.reducedMotion.matches) return;
+    if (this.disposed || this.pageHidden || this.externallyPaused || this.reducedMotion.matches) return;
     const delta = this.previousFrame ? Math.min(0.05, (now - this.previousFrame) / 1000) : 0;
     this.previousFrame = now;
     const elapsed = now / 1000;
@@ -218,7 +231,15 @@ export class VisualEngine {
   };
 
   private emitStats(): void {
-    this.onStats({ fps: this.lastFPS, width: this.canvas.width, height: this.canvas.height, tier: this.quality.currentTier, api: 'WEBGL2' });
+    this.onStats({
+      fps: this.lastFPS,
+      width: this.canvas.width,
+      height: this.canvas.height,
+      mode: this.quality.currentMode,
+      tier: this.quality.currentTier,
+      api: 'WEBGL2',
+      diagnostic: this.quality.currentDiagnostic,
+    });
   }
 
   dispose(): void {
