@@ -16,6 +16,11 @@ export const WORKLOADS: Record<WorkloadLevel, WorkloadConfig> = {
     level: 'heavy', label: 'Heavy', description: '1,400 high-detail instances', seed: 4721,
     instanceCount: 1400, geometry: 'torus-knot', radialSegments: 120, tubularSegments: 12,
   },
+  'car-concept': {
+    level: 'car-concept', label: 'Car Concept', description: 'Original GLB model baseline', seed: 0,
+    instanceCount: 1, geometry: 'gltf', radialSegments: 0, tubularSegments: 0,
+    assetUrl: '/models/CarConcept.glb',
+  },
 };
 
 function seededRandom(seedValue: number): () => number {
@@ -27,6 +32,7 @@ function seededRandom(seedValue: number): () => number {
 }
 
 export function createWorkload(config: WorkloadConfig): THREE.InstancedMesh {
+  if (config.geometry === 'gltf') throw new Error('GLB workloads must load through GLTFLoader.');
   const count = Math.min(MAX_BENCHMARK_INSTANCES, Math.max(1, config.instanceCount));
   const geometry = config.geometry === 'icosahedron'
     ? new THREE.IcosahedronGeometry(0.17, config.radialSegments)

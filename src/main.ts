@@ -59,6 +59,7 @@ const benchmarkCanvas = document.querySelector<HTMLCanvasElement>('#benchmark-ca
 const benchmarkHost = document.querySelector<HTMLElement>('#benchmark-viewport');
 const workloadSelect = document.querySelector<HTMLSelectElement>('#workload-select');
 const qualitySelect = document.querySelector<HTMLSelectElement>('#benchmark-quality-select');
+const resolutionSelect = document.querySelector<HTMLSelectElement>('#resolution-select');
 const startButton = document.querySelector<HTMLButtonElement>('#benchmark-start');
 const compareButton = document.querySelector<HTMLButtonElement>('#benchmark-compare');
 const stopButton = document.querySelector<HTMLButtonElement>('#benchmark-stop');
@@ -68,6 +69,7 @@ const progress = document.querySelector<HTMLProgressElement>('#benchmark-progres
 const phaseLabel = document.querySelector<HTMLElement>('#benchmark-phase');
 const countdownLabel = document.querySelector<HTMLElement>('#benchmark-countdown');
 const autoDiagnosticLabel = document.querySelector<HTMLElement>('#auto-diagnostic');
+const figureLabel = document.querySelector<HTMLElement>('#benchmark-figure-label');
 const sceneLabel = document.querySelector<HTMLElement>('#benchmark-scene-label');
 const resultsBody = document.querySelector<HTMLTableSectionElement>('#results-body');
 const fpsLabel = document.querySelector<HTMLElement>('#metric-fps');
@@ -105,7 +107,7 @@ function renderLiveStats(stats: LiveBenchmarkStats): void {
   if (drawLabel) drawLabel.textContent = stats.drawCalls.toLocaleString();
   if (trianglesLabel) trianglesLabel.textContent = stats.triangles.toLocaleString();
   if (resolutionLabel) resolutionLabel.textContent = `${stats.canvasWidth} × ${stats.canvasHeight}`;
-  if (dprLabel) dprLabel.textContent = `BUFFER / ${stats.effectiveDpr.toFixed(2)}× DPR`;
+  if (dprLabel) dprLabel.textContent = `BUFFER / ${stats.effectiveDpr.toFixed(2)}× DPR / ${Math.round(stats.renderScale * 100)}% SCALE`;
   if (metricTierLabel) metricTierLabel.textContent = stats.qualityTier.toUpperCase();
   if (workloadLabel) workloadLabel.textContent = `${stats.workload.toUpperCase()} / ${stats.qualityMode.toUpperCase()} MODE`;
 }
@@ -113,6 +115,7 @@ function renderLiveStats(stats: LiveBenchmarkStats): void {
 function setControlsRunning(running: boolean): void {
   if (workloadSelect) workloadSelect.disabled = running;
   if (qualitySelect) qualitySelect.disabled = running;
+  if (resolutionSelect) resolutionSelect.disabled = running;
   if (startButton) startButton.disabled = running;
   if (compareButton) compareButton.disabled = running;
   if (stopButton) stopButton.disabled = !running;
@@ -203,7 +206,7 @@ if (benchmarkCanvas && benchmarkHost && supportsWebGL2) {
     runner = new BenchmarkRunner({
       onPlanStart: (plan) => {
         activeDiagnostics = [];
-        labEngine?.setWorkload(plan.workload);
+        void labEngine?.setWorkload(plan.workload);
         labEngine?.setQualityMode(plan.qualityMode);
         if (qualitySelect) qualitySelect.value = plan.qualityMode;
       },
@@ -239,21 +242,48 @@ if (benchmarkCanvas && benchmarkHost && supportsWebGL2) {
 }
 
 if (!labEngine) {
-  [workloadSelect, qualitySelect, startButton, compareButton, stopButton].forEach((control) => {
+  [workloadSelect, qualitySelect, resolutionSelect, startButton, compareButton, stopButton].forEach((control) => {
     if (control) control.disabled = true;
   });
   if (gpuLabel) gpuLabel.textContent = 'N/A';
   if (gpuNote) gpuNote.textContent = 'WEBGL2 UNAVAILABLE';
 }
 
-workloadSelect?.addEventListener('change', () => {
+workloadSelect?.addEventListener('change', async () => {
   const workload = workloadSelect.value as WorkloadLevel;
-  labEngine?.setWorkload(workload);
   const config = WORKLOADS[workload];
-  if (sceneLabel) sceneLabel.textContent = `${config.label.toUpperCase()} / ${config.instanceCount.toLocaleString()} INSTANCES`;
+  if (!labEngine || !config) return;
+  setControlsRunning(true);
+  if (stopButton) stopButton.disabled = true;
+  if (sceneLabel) sceneLabel.textContent = `${config.label.toUpperCase()} / LOADING`;
+  if (warning) warning.textContent = workload === 'car-concept'
+    ? 'Loading the original Car Concept GLB. Its PBR materials will remain unchanged.'
+    : '';
+  try {
+    await labEngine.setWorkload(workload);
+    if (sceneLabel) sceneLabel.textContent = workload === 'car-concept'
+      ? 'CAR CONCEPT / GLB BASELINE'
+      : `${config.label.toUpperCase()} / ${config.instanceCount.toLocaleString()} INSTANCES`;
+    if (figureLabel) figureLabel.textContent = workload === 'car-concept'
+      ? 'FIG. 002 / MODEL BASELINE'
+      : 'FIG. 002 / SEEDED LOAD FIELD';
+    if (warning && workload === 'car-concept') warning.textContent = 'Car Concept baseline ready. Drag to orbit and scroll to zoom.';
+  } catch (error) {
+    console.error('AVE workload loading failed:', error);
+    workloadSelect.value = labEngine.currentWorkload;
+    const activeConfig = WORKLOADS[labEngine.currentWorkload];
+    if (figureLabel) figureLabel.textContent = labEngine.currentWorkload === 'car-concept'
+      ? 'FIG. 002 / MODEL BASELINE'
+      : 'FIG. 002 / SEEDED LOAD FIELD';
+    if (sceneLabel) sceneLabel.textContent = `${activeConfig.label.toUpperCase()} / ${activeConfig.instanceCount.toLocaleString()} INSTANCES`;
+    if (warning) warning.textContent = 'The selected workload could not load. The previous scene remains active.';
+  } finally {
+    setControlsRunning(false);
+  }
 });
 
 qualitySelect?.addEventListener('change', () => labEngine?.setQualityMode(qualitySelect.value as QualityMode));
+resolutionSelect?.addEventListener('change', () => labEngine?.setResolutionScale(Number(resolutionSelect.value)));
 
 startButton?.addEventListener('click', () => {
   const workload = (workloadSelect?.value ?? 'medium') as WorkloadLevel;

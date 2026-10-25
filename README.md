@@ -10,6 +10,7 @@ A lightweight proof of concept for crisp vector interfaces, real-time 3D, respon
 - Isolated Light, Medium, and Heavy benchmark workloads built with deterministic procedural geometry and `InstancedMesh`.
 - Live frame interval, CPU submission, asynchronous GPU timing, draw calls, triangles, canvas dimensions, DPR, and active configuration.
 - Repeatable single-preset and High/Balanced/Eco comparison runs with JSON and CSV export.
+- A standard Car Concept GLB baseline with original PBR materials, orbit controls, procedural studio lighting, and selectable render scale.
 - Reduced-motion support: pauses continuous rendering and static fallback.
 - Visibility-aware animation and WebGL2 fallback.
 - Static build (`dist/`), no API or GPU server required.
@@ -45,6 +46,14 @@ npm run preview
 5. Use **Compare presets** to run High, Balanced, and Eco in sequence with the same workload.
 6. Export completed results as JSON or CSV. The export includes the browser user agent, GPU renderer string when exposed, canvas resolution, device and effective DPR, workload configuration, and UTC timestamp.
 
+### Car Concept baseline
+
+Select **Car Concept — original GLB baseline** in the workload control. AVE loads `public/models/CarConcept.glb` through Three.js `GLTFLoader`. It keeps the GLB materials unchanged and adds only scene-level environment lighting, camera framing, and `OrbitControls`. Drag to orbit and use the mouse wheel or trackpad to zoom.
+
+Use the render-resolution control to run at 100%, 75%, or 50% of the quality tier's effective DPR. The selected scale and resulting canvas buffer size are included in exports. This scene is a standard Three.js reference path for later AVE optimization comparisons.
+
+The source model SHA-256 is `C272098089D78C5CD9FD9F24FF50EE8ACF8D932C55F2D55FC10ADB6C8998966B`. Do not replace or modify this model when comparing renderer changes.
+
 The Hero and benchmark use separate scenes and renderers. AVE pauses the Hero during an active benchmark so it does not add render work to the sample. The workload geometry, transforms, and colors use fixed seeds. Workload levels increase submitted triangle work, not the number of JavaScript scene objects.
 
 ### Metric definitions
@@ -67,6 +76,7 @@ The Hero and benchmark use separate scenes and renderers. AVE pauses the Hero du
 - `src/benchmark/runner.ts` — fixed warm-up, sampling, and preset-comparison lifecycle
 - `src/benchmark/statistics.ts` — benchmark summary calculations
 - `src/benchmark/workloads.ts` — bounded seeded procedural workloads
+- `public/models/CarConcept.glb` — unchanged Car Concept baseline model
 - `src/style.css` — responsive interface design
 - `src/lab.css` — Performance Lab controls, metrics, and results layout
 

@@ -100,8 +100,8 @@
 
           <div class="benchmark-layout">
             <div class="benchmark-viewport" id="benchmark-viewport">
-              <canvas id="benchmark-canvas" aria-label="Procedural benchmark scene"></canvas>
-              <div class="benchmark-overlay" aria-hidden="true"><span>FIG. 002 / SEEDED LOAD FIELD</span><span id="benchmark-scene-label">MEDIUM / 640 INSTANCES</span></div>
+              <canvas id="benchmark-canvas" aria-label="Benchmark render scene"></canvas>
+              <div class="benchmark-overlay" aria-hidden="true"><span id="benchmark-figure-label">FIG. 002 / SEEDED LOAD FIELD</span><span id="benchmark-scene-label">MEDIUM / 640 INSTANCES</span></div>
             </div>
             <div class="benchmark-controls" aria-label="Benchmark controls">
               <div class="control-field">
@@ -110,6 +110,7 @@
                   <option value="light">Light — 160 low-detail instances</option>
                   <option value="medium" selected>Medium — 640 moderate-detail instances</option>
                   <option value="heavy">Heavy — 1,400 high-detail instances</option>
+                  <option value="car-concept">Car Concept — original GLB baseline</option>
                 </select>
               </div>
               <div class="control-field">
@@ -119,6 +120,14 @@
                   <option value="high">High</option>
                   <option value="balanced" selected>Balanced</option>
                   <option value="eco">Eco</option>
+                </select>
+              </div>
+              <div class="control-field">
+                <label for="resolution-select">RENDER RESOLUTION</label>
+                <select id="resolution-select">
+                  <option value="1" selected>100% — quality-tier DPR</option>
+                  <option value="0.75">75% — reduced buffer</option>
+                  <option value="0.5">50% — reduced buffer</option>
                 </select>
               </div>
               <div class="benchmark-actions">

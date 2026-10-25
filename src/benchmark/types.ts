@@ -1,6 +1,6 @@
 import type { QualityMode, QualityTier } from '../engine/quality';
 
-export type WorkloadLevel = 'light' | 'medium' | 'heavy';
+export type WorkloadLevel = 'light' | 'medium' | 'heavy' | 'car-concept';
 
 export type WorkloadConfig = {
   level: WorkloadLevel;
@@ -8,9 +8,10 @@ export type WorkloadConfig = {
   description: string;
   seed: number;
   instanceCount: number;
-  geometry: 'icosahedron' | 'torus-knot';
+  geometry: 'icosahedron' | 'torus-knot' | 'gltf';
   radialSegments: number;
   tubularSegments: number;
+  assetUrl?: string;
 };
 
 export type FrameSample = {
@@ -26,6 +27,7 @@ export type LiveBenchmarkStats = FrameSample & {
   canvasWidth: number;
   canvasHeight: number;
   effectiveDpr: number;
+  renderScale: number;
   qualityMode: QualityMode;
   qualityTier: QualityTier;
   workload: WorkloadLevel;
@@ -55,6 +57,7 @@ export type BenchmarkEnvironment = {
   canvasHeight: number;
   devicePixelRatio: number;
   effectiveDpr: number;
+  renderScale: number;
   gpuTimerSupported: boolean;
 };
 
