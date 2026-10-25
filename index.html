@@ -4,11 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#080b10" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%23080b10'/%3E%3Cpath d='M16 5 27 16 16 27 5 16Z' fill='none' stroke='%23aee7ff' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='3' fill='%23aee7ff'/%3E%3C/svg%3E" />
     <link rel="stylesheet" href="/src/style.css" />
+    <link rel="stylesheet" href="/src/lab.css" />
     <meta name="description" content="Adaptive Web Graphics Engine: an experiment in sharp interfaces, interactive 3D, and adaptive graphics delivery." />
     <title>AVE — Adaptive Visual Engine</title>
   </head>
   <body>
+    <a class="skip-link" href="#lab">SKIP TO PERFORMANCE LAB</a>
     <div id="app">
       <header class="site-header">
         <a class="brand" href="#top" aria-label="AVE home">
@@ -18,7 +21,7 @@
         <nav class="main-nav" aria-label="Main navigation">
           <a href="#platform">THE ENGINE</a><a href="#lab">PERFORMANCE LAB</a>
         </nav>
-        <div class="top-status"><span class="status-dot"></span> SYSTEM ONLINE <span class="status-version">/ EXPERIMENT 001</span></div>
+        <div class="top-status"><span class="status-dot"></span> SYSTEM ONLINE <span class="status-version">/ EXPERIMENT 002</span></div>
       </header>
 
       <main id="top">
@@ -93,19 +96,76 @@
 
         <section class="lab-section" id="lab">
           <div class="section-marker"><span class="section-rule"></span> 02 / PERFORMANCE LAB</div>
-          <div class="lab-headline"><h2>MEASURE.<br/><span>DON'T GUESS.</span></h2><p>Live diagnostic readings from this device. Frame rate is a rough performance indicator, not a cross-device benchmark.</p></div>
-          <div class="metrics-grid">
-            <div class="metric"><span>RENDER FPS</span><strong id="metric-fps">—</strong><small>RECENT SAMPLE / APPROXIMATE</small></div>
-            <div class="metric"><span>RENDER RESOLUTION</span><strong id="metric-resolution" class="metric-small">—</strong><small>CANVAS BUFFER / PIXELS</small></div>
-            <div class="metric"><span>QUALITY TIER</span><strong id="metric-tier" class="metric-small">—</strong><small>3 PRESET BUDGETS</small></div>
-            <div class="metric"><span>GRAPHICS API</span><strong id="metric-api" class="metric-small">WEBGL2</strong><small>BASELINE RENDERER</small></div>
+          <div class="lab-headline"><h2>MEASURE.<br/><span>DON'T GUESS.</span></h2><p>Run a controlled 5-second warm-up and a 20-second sample. Frame rate, frame time, CPU submission, and GPU timing are reported as separate signals.</p></div>
+
+          <div class="benchmark-layout">
+            <div class="benchmark-viewport" id="benchmark-viewport">
+              <canvas id="benchmark-canvas" aria-label="Procedural benchmark scene"></canvas>
+              <div class="benchmark-overlay" aria-hidden="true"><span>FIG. 002 / SEEDED LOAD FIELD</span><span id="benchmark-scene-label">MEDIUM / 640 INSTANCES</span></div>
+            </div>
+            <div class="benchmark-controls" aria-label="Benchmark controls">
+              <div class="control-field">
+                <label for="workload-select">WORKLOAD</label>
+                <select id="workload-select">
+                  <option value="light">Light — 160 low-detail instances</option>
+                  <option value="medium" selected>Medium — 640 moderate-detail instances</option>
+                  <option value="heavy">Heavy — 1,400 high-detail instances</option>
+                </select>
+              </div>
+              <div class="control-field">
+                <label for="benchmark-quality-select">QUALITY PRESET</label>
+                <select id="benchmark-quality-select">
+                  <option value="auto">Auto</option>
+                  <option value="high">High</option>
+                  <option value="balanced" selected>Balanced</option>
+                  <option value="eco">Eco</option>
+                </select>
+              </div>
+              <div class="benchmark-actions">
+                <button type="button" id="benchmark-start" class="lab-button lab-button-primary">START BENCHMARK</button>
+                <button type="button" id="benchmark-compare" class="lab-button">COMPARE PRESETS</button>
+                <button type="button" id="benchmark-stop" class="lab-button lab-button-stop" disabled>STOP</button>
+              </div>
+              <div class="benchmark-progress" aria-live="polite">
+                <div><span id="benchmark-phase">READY</span><span id="benchmark-countdown">25.0 S PER PRESET</span></div>
+                <progress id="benchmark-progress" max="1" value="0">0%</progress>
+              </div>
+              <p class="auto-diagnostic"><span>AUTO DIAGNOSTIC</span><strong id="auto-diagnostic">Manual balanced mode selected. Auto adjustments are off.</strong></p>
+            </div>
+          </div>
+
+          <div class="metrics-grid metrics-grid-expanded" aria-label="Live diagnostic metrics">
+            <div class="metric"><span>FRAME RATE</span><strong id="metric-fps">—</strong><small>FPS / LIVE INTERVAL</small></div>
+            <div class="metric"><span>FRAME TIME</span><strong id="metric-frame" class="metric-small">—</strong><small>MILLISECONDS / LIVE</small></div>
+            <div class="metric"><span>CPU SUBMISSION</span><strong id="metric-cpu" class="metric-small">—</strong><small>RENDER CALL / NOT GPU TIME</small></div>
+            <div class="metric"><span>GPU FRAME TIME</span><strong id="metric-gpu" class="metric-small">—</strong><small id="metric-gpu-note">ASYNC TIMER QUERY</small></div>
+            <div class="metric"><span>DRAW CALLS</span><strong id="metric-draws" class="metric-small">—</strong><small>THREE.JS RENDER INFO</small></div>
+            <div class="metric"><span>TRIANGLES</span><strong id="metric-triangles" class="metric-small">—</strong><small>SUBMITTED PER FRAME</small></div>
+            <div class="metric"><span>RENDER RESOLUTION</span><strong id="metric-resolution" class="metric-small">—</strong><small id="metric-dpr">BUFFER / EFFECTIVE DPR</small></div>
+            <div class="metric"><span>QUALITY / WORKLOAD</span><strong id="metric-tier" class="metric-small">—</strong><small id="metric-workload">SELECTED CONFIGURATION</small></div>
           </div>
           <p id="metrics-warning" class="metrics-warning" aria-live="polite"></p>
-          <p class="metrics-disclaimer">Experimental build 0.1. Metrics are local runtime samples. Performance claims require controlled multi-device testing.</p>
+
+          <div class="results-panel">
+            <div class="results-heading">
+              <div><span class="mini-overline">COMPLETED RUNS</span><h3>BENCHMARK RESULTS</h3></div>
+              <div class="export-actions">
+                <button type="button" id="export-json" class="lab-button" disabled>EXPORT JSON</button>
+                <button type="button" id="export-csv" class="lab-button" disabled>EXPORT CSV</button>
+              </div>
+            </div>
+            <div class="results-table-wrap">
+              <table class="results-table">
+                <thead><tr><th>PRESET</th><th>WORKLOAD</th><th>AVG FPS</th><th>AVG FRAME</th><th>P95 FRAME</th><th>1% LOW</th><th>CPU SUBMIT</th><th>GPU FRAME</th><th>CALLS</th><th>TRIANGLES</th></tr></thead>
+                <tbody id="results-body"><tr class="empty-result"><td colspan="10">NO COMPLETED RUNS IN THIS SESSION</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+          <p class="metrics-disclaimer">Experimental build 0.2. Results are local runtime samples. Display refresh can cap FPS, so compare frame time, GPU time, and workload counts. Auto mode is diagnostic and is not a validated optimizer.</p>
         </section>
       </main>
 
-      <footer class="site-footer"><span>AVE / ADAPTIVE VISUAL ENGINE</span><span>BUILD 0.1.0 — AN OPEN EXPERIMENT IN WEB GRAPHICS</span><a href="#top">BACK TO TOP ↑</a></footer>
+      <footer class="site-footer"><span>AVE / ADAPTIVE VISUAL ENGINE</span><span>BUILD 0.2.0 — PERFORMANCE LAB</span><a href="#top">BACK TO TOP ↑</a></footer>
     </div>
     <script type="module" src="/src/main.ts"></script>
   </body>

@@ -1,11 +1,12 @@
 {
   "name": "adaptive-web-graphics-engine",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "build": "tsc --noEmit && vite build",
+    "test": "node --test --experimental-strip-types tests/*.test.mjs",
     "preview": "vite preview --host 127.0.0.1",
     "typecheck": "tsc --noEmit"
   },
